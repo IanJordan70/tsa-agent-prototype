@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TSA Events — Registration Intake Agent (Prototype)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #2a2723;
+    --ink-soft: #5c574f;
+    --ink-whisper: #8a847a;
+    --paper: #f5f1ea;
+    --paper-warm: #ede7db;
+    --paper-cream: #fbf8f2;
+    --rule: #d4ccbd;
+    --rule-soft: #e3dccd;
+    --accent: #6b5843;
+    --accent-warm: #a68968;
+    --flag: #9a6b1f;
+    --ok: #5d6b4a;
+    --alert: #8b3f2f;
+
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --display: 'Cormorant Garamond', 'Times New Roman', serif;
+    --body: 'Montserrat', system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { background: var(--paper); }
+
+  body {
+    font-family: var(--body);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 14.5px;
+    font-weight: 400;
+    min-height: 100vh;
+    letter-spacing: 0.005em;
+  }
+
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 64px 48px 96px;
+  }
+
+  @media (max-width: 760px) {
+    .container { padding: 40px 24px 72px; }
+  }
+
+  header {
+    padding-bottom: 48px;
+    margin-bottom: 48px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .brand-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 56px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+
+  .wordmark {
+    font-family: var(--body);
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .wordmark span {
+    color: var(--accent-warm);
+  }
+
+  .tool-tag {
+    font-family: var(--body);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-whisper);
+    font-weight: 400;
+  }
+
+  .title-block {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 48px;
+    align-items: end;
+  }
+
+  @media (max-width: 760px) {
+    .title-block { grid-template-columns: 1fr; gap: 24px; }
+  }
+
+  .eyebrow {
+    font-family: var(--body);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  h1 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 72px;
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  h1 .italic {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--accent);
+  }
+
+  h1 .lower {
+    text-transform: lowercase;
+  }
+
+  @media (max-width: 760px) {
+    h1 { font-size: 48px; }
+  }
+
+  .subtitle {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 20px;
+    line-height: 1.4;
+    color: var(--ink-soft);
+    max-width: 400px;
+  }
+
+  .notice {
+    background: var(--paper-cream);
+    border: 1px solid var(--rule);
+    padding: 28px 32px;
+    margin-bottom: 56px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 28px;
+    align-items: start;
+  }
+
+  @media (max-width: 760px) {
+    .notice { grid-template-columns: 1fr; gap: 12px; padding: 24px; }
+  }
+
+  .notice-mark {
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 32px;
+    color: var(--accent);
+    line-height: 1;
+    padding-top: 4px;
+  }
+
+  .notice-label {
+    font-family: var(--body);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  .notice-text {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.65;
+  }
+
+  .notice-text strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .notice-text em {
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 16px;
+    color: var(--accent);
+  }
+
+  .workspace {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+
+  @media (max-width: 980px) {
+    .workspace { grid-template-columns: 1fr; }
+  }
+
+  .panel {
+    background: var(--paper-cream);
+    border: 1px solid var(--rule);
+    padding: 36px;
+  }
+
+  @media (max-width: 760px) {
+    .panel { padding: 24px; }
+  }
+
+  .panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-bottom: 20px;
+    margin-bottom: 28px;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+
+  .panel-title {
+    font-family: var(--display);
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.005em;
+  }
+
+  .panel-title .italic {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .panel-num {
+    font-family: var(--body);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--ink-whisper);
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .section-label {
+    font-family: var(--body);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-whisper);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+
+  .input-type {
+    display: flex;
+    gap: 0;
+    margin-bottom: 24px;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+  }
+
+  .type-btn {
+    flex: 1;
+    font-family: var(--body);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 12px 8px;
+    background: transparent;
+    border: none;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+    border-right: 1px solid var(--rule-soft);
+  }
+
+  .type-btn:last-child { border-right: none; }
+  .type-btn:hover { color: var(--accent); background: rgba(107, 88, 67, 0.04); }
+
+  .type-btn.active {
+    background: var(--ink);
+    color: var(--paper-cream);
+  }
+
+  .samples { margin-bottom: 24px; }
+
+  .sample-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  @media (max-width: 400px) {
+    .sample-row { grid-template-columns: 1fr; }
+  }
+
+  .sample-btn {
+    font-family: var(--body);
+    font-size: 12px;
+    padding: 10px 14px;
+    background: transparent;
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .sample-btn .dot {
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accent-warm);
+    flex-shrink: 0;
+  }
+
+  .sample-btn:hover {
+    background: var(--paper-warm);
+    border-color: var(--accent);
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 280px;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    padding: 20px 22px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.65;
+    color: var(--ink);
+    resize: vertical;
+    letter-spacing: 0;
+  }
+
+  textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: #fefcf6;
+  }
+
+  textarea::placeholder {
+    color: var(--ink-whisper);
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 14px;
+    letter-spacing: 0;
+  }
+
+  /* Input mode swapping */
+  .input-mode { display: none; }
+  .input-mode.active { display: block; }
+
+  /* PDF preview */
+  .pdf-preview {
+    background: #ffffff;
+    border: 1px solid var(--rule);
+    padding: 32px 36px;
+    min-height: 280px;
+    box-shadow: 0 1px 0 var(--rule-soft), 0 8px 24px -16px rgba(42, 39, 35, 0.15);
+    font-family: 'Times New Roman', serif;
+    color: #1a1a1a;
+    font-size: 12px;
+    line-height: 1.55;
+    position: relative;
+  }
+
+  .pdf-tag {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-family: var(--body);
+    font-size: 8px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-whisper);
+    background: var(--paper-warm);
+    padding: 3px 7px;
+    border: 1px solid var(--rule);
+    font-weight: 500;
+  }
+
+  .pdf-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 14px;
+    border-bottom: 1.5px solid #1a1a1a;
+    margin-bottom: 16px;
+  }
+
+  .pdf-logo {
+    font-family: 'Times New Roman', serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #d41818;
+  }
+
+  .pdf-logo-sub {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: #666;
+    text-transform: uppercase;
+    margin-top: 2px;
+    font-weight: 400;
+  }
+
+  .pdf-title {
+    font-size: 10px;
+    text-align: right;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .pdf-title strong {
+    display: block;
+    font-size: 13px;
+    color: #1a1a1a;
+    margin-top: 2px;
+    letter-spacing: 0.02em;
+  }
+
+  .pdf-section {
+    margin-bottom: 14px;
+  }
+
+  .pdf-section-label {
+    font-size: 8.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 4px;
+    font-family: var(--body);
+    font-weight: 500;
+  }
+
+  .pdf-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    padding: 10px 0;
+    border-bottom: 1px dotted #ccc;
+  }
+
+  .pdf-row:last-child { border-bottom: none; }
+
+  .pdf-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #888;
+    font-family: var(--body);
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+
+  .pdf-value {
+    font-size: 12.5px;
+    color: #1a1a1a;
+    font-weight: 600;
+  }
+
+  .pdf-value-small {
+    font-size: 11px;
+    color: #1a1a1a;
+    font-weight: 500;
+  }
+
+  .pdf-footer {
+    margin-top: 18px;
+    padding-top: 12px;
+    border-top: 1px solid #ddd;
+    font-size: 9px;
+    color: #888;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* Image preview — WhatsApp-style */
+  .image-preview {
+    background: #ece5dd;
+    border: 1px solid var(--rule);
+    padding: 24px;
+    min-height: 280px;
+    position: relative;
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(255,255,255,0.3) 0, transparent 40%),
+      radial-gradient(circle at 80% 60%, rgba(255,255,255,0.2) 0, transparent 40%);
+  }
+
+  .image-tag {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-family: var(--body);
+    font-size: 8px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-whisper);
+    background: var(--paper-cream);
+    padding: 3px 7px;
+    border: 1px solid var(--rule);
+    font-weight: 500;
+    z-index: 2;
+  }
+
+  .chat-header {
+    background: #075e54;
+    color: #fff;
+    padding: 10px 12px;
+    margin: -24px -24px 16px -24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Segoe UI', -apple-system, sans-serif;
+  }
+
+  .chat-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #128c7e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .chat-name {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .chat-status {
+    font-size: 10px;
+    opacity: 0.8;
+  }
+
+  .chat-bubble {
+    background: #fff;
+    border-radius: 8px;
+    padding: 10px 12px;
+    max-width: 90%;
+    margin-bottom: 8px;
+    font-family: 'Segoe UI', -apple-system, sans-serif;
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: #111;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.08);
+    position: relative;
+  }
+
+  .chat-bubble.sent {
+    background: #dcf8c6;
+    margin-left: auto;
+  }
+
+  .chat-time {
+    font-size: 9.5px;
+    color: #999;
+    text-align: right;
+    margin-top: 3px;
+  }
+
+  /* Voice preview */
+  .voice-preview {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    padding: 28px;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+  }
+
+  .voice-tag {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-family: var(--body);
+    font-size: 8px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-whisper);
+    background: var(--paper-cream);
+    padding: 3px 7px;
+    border: 1px solid var(--rule);
+    font-weight: 500;
+  }
+
+  .voice-meta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-bottom: 18px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+
+  .voice-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--paper-cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .voice-sender {
+    font-family: var(--display);
+    font-size: 17px;
+    font-style: italic;
+    color: var(--ink);
+  }
+
+  .voice-duration {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-whisper);
+    margin-top: 2px;
+  }
+
+  .waveform {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    height: 48px;
+    margin-bottom: 20px;
+  }
+
+  .wave-bar {
+    flex: 1;
+    background: var(--rule);
+    border-radius: 1px;
+    transition: background 0.3s;
+  }
+
+  .wave-bar.played { background: var(--accent); }
+  .wave-bar.playing { background: var(--accent-warm); }
+
+  .voice-transcript-label {
+    font-family: var(--body);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-whisper);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .voice-transcript {
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--ink);
+    background: var(--paper-cream);
+    padding: 16px 18px;
+    border-left: 2px solid var(--accent);
+    min-height: 80px;
+  }
+
+  .voice-transcript-empty {
+    color: var(--ink-whisper);
+    font-size: 14px;
+  }
+
+  .extract-btn {
+    margin-top: 24px;
+    font-family: var(--body);
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    padding: 18px 24px;
+    background: var(--ink);
+    color: var(--paper-cream);
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.25s;
+    font-weight: 500;
+  }
+
+  .extract-btn:hover {
+    background: var(--accent);
+    letter-spacing: 0.3em;
+  }
+
+  .empty-state { text-align: center; padding: 60px 20px; }
+
+  .empty-ornament {
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 48px;
+    color: var(--rule);
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+
+  .empty-state-display {
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 22px;
+    font-weight: 300;
+    margin-bottom: 12px;
+    color: var(--ink);
+  }
+
+  .empty-state-text {
+    font-size: 13.5px;
+    max-width: 300px;
+    margin: 0 auto;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+
+  .processing { text-align: center; padding: 80px 20px; }
+
+  .processing-word {
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 28px;
+    color: var(--accent);
+    font-weight: 300;
+  }
+
+  .extraction-summary {
+    font-family: var(--display);
+    font-size: 17px;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--ink);
+    margin-bottom: 28px;
+    padding: 20px 24px;
+    background: var(--paper-warm);
+    border-left: 2px solid var(--accent);
+    line-height: 1.5;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--rule-soft);
+    gap: 6px;
+  }
+
+  .field-row:first-of-type { padding-top: 0; }
+  .field-row:last-of-type { border-bottom: none; padding-bottom: 0; }
+
+  .field-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .field-label {
+    font-family: var(--body);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-whisper);
+    font-weight: 500;
+  }
+
+  .field-value {
+    font-family: var(--body);
+    font-size: 15px;
+    color: var(--ink);
+    font-weight: 400;
+    letter-spacing: 0.005em;
+  }
+
+  .confidence {
+    font-family: var(--body);
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    padding: 3px 8px;
+    border: 1px solid;
+    white-space: nowrap;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .confidence.high { color: var(--ok); border-color: var(--ok); }
+  .confidence.med { color: var(--flag); border-color: var(--flag); }
+  .confidence.flag { color: var(--alert); border-color: var(--alert); }
+
+  .field-note {
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .flags-section {
+    margin-top: 32px;
+    padding: 24px;
+    background: rgba(139, 63, 47, 0.04);
+    border: 1px solid rgba(139, 63, 47, 0.15);
+  }
+
+  .flags-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .flags-ornament {
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 22px;
+    color: var(--alert);
+    line-height: 1;
+  }
+
+  .flags-title {
+    font-family: var(--body);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--alert);
+    font-weight: 500;
+  }
+
+  .flag-item {
+    font-size: 13.5px;
+    color: var(--ink);
+    padding: 8px 0;
+    line-height: 1.55;
+    padding-left: 16px;
+    position: relative;
+  }
+
+  .flag-item::before {
+    content: "—";
+    color: var(--alert);
+    position: absolute;
+    left: 0;
+  }
+
+  .action-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 32px;
+  }
+
+  @media (max-width: 400px) {
+    .action-row { grid-template-columns: 1fr; }
+  }
+
+  .action-btn {
+    font-family: var(--body);
+    font-size: 10.5px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    padding: 16px;
+    border: 1px solid var(--ink);
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+  }
+
+  .action-btn.primary {
+    background: var(--ink);
+    color: var(--paper-cream);
+  }
+
+  .action-btn:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--paper-cream);
+  }
+
+  footer {
+    margin-top: 80px;
+    padding-top: 48px;
+    border-top: 1px solid var(--rule);
+  }
+
+  .footer-heading {
+    font-family: var(--display);
+    font-size: 28px;
+    font-weight: 400;
+    margin-bottom: 36px;
+    color: var(--ink);
+  }
+
+  .footer-heading .italic {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 56px;
+  }
+
+  @media (max-width: 760px) {
+    .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+  }
+
+  .footer-col {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.65;
+  }
+
+  .footer-col-title {
+    font-family: var(--body);
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin-bottom: 14px;
+    font-weight: 500;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .footer-col p { margin-bottom: 8px; }
+
+  .footer-sign {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule-soft);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--body);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-whisper);
+    font-weight: 500;
+  }
+
+  .footer-sign .italic {
+    font-family: var(--display);
+    font-style: italic;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 14px;
+    color: var(--accent);
+  }
+
+  .fade-in { animation: fadeIn 0.6s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .pulse-text { animation: pulseText 1.4s ease-in-out infinite; }
+
+  @keyframes pulseText {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <div class="brand-bar">
+      <div class="wordmark">TSA <span>·</span> EVENTS</div>
+      <div class="tool-tag">Internal Tooling · v0.1 Prototype</div>
+    </div>
+
+    <div class="title-block">
+      <div>
+        <div class="eyebrow">Registration Intake Agent</div>
+        <h1>
+          <span class="lower">paste</span><br>
+          <span class="italic">anything.</span>
+        </h1>
+      </div>
+      <div class="subtitle">
+        Emails, PDFs, voice notes, forwarded airline confirmations, dietary requirements scribbled into a reply — the agent reads it and extracts what the platform needs.
+      </div>
+    </div>
+  </header>
+
+  <div class="notice">
+    <div class="notice-mark">&#x273f;</div>
+    <div>
+      <div class="notice-label">A note before you try this</div>
+      <div class="notice-text"><strong>This is a clickable mockup, not the real thing.</strong> The "agent" below uses pre-written responses matched to sample inputs — it's not calling Claude. The intent is to show the <em>shape</em> of the tool and how the workflow would feel, so you can tell me what's right, what's wrong, and what's missing. Click the sample inputs on the left to see different scenarios.</div>
+    </div>
+  </div>
+
+  <div class="workspace">
+
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Raw <span class="italic">Input</span></div>
+        <div class="panel-num">01 · Intake</div>
+      </div>
+
+      <div class="section-label">Input format</div>
+      <div class="input-type">
+        <button class="type-btn active" data-type="text">Text / Email</button>
+        <button class="type-btn" data-type="pdf">PDF</button>
+        <button class="type-btn" data-type="image">Image</button>
+        <button class="type-btn" data-type="voice">Voice Note</button>
+      </div>
+
+      <div class="samples">
+        <div class="section-label">Try a sample</div>
+        <div class="sample-row">
+          <button class="sample-btn" data-sample="flight"><span class="dot"></span>Forwarded airline email</button>
+          <button class="sample-btn" data-sample="dietary"><span class="dot"></span>Dietary requirements</button>
+          <button class="sample-btn" data-sample="delegate"><span class="dot"></span>New delegate details</button>
+          <button class="sample-btn" data-sample="messy"><span class="dot"></span>Ambiguous message</button>
+        </div>
+      </div>
+
+      <div class="section-label">Input preview</div>
+
+      <!-- TEXT MODE -->
+      <div class="input-mode active" id="mode-text">
+        <textarea id="inputArea" placeholder="Paste a forwarded email, delegate message, flight confirmation, or anything else here — or click a sample above."></textarea>
+      </div>
+
+      <!-- PDF MODE -->
+      <div class="input-mode" id="mode-pdf">
+        <div class="pdf-preview">
+          <div class="pdf-tag">PDF · Page 1 of 1</div>
+          <div class="pdf-header">
+            <div>
+              <div class="pdf-logo">SWISS</div>
+              <div class="pdf-logo-sub">Swiss International Air Lines</div>
+            </div>
+            <div class="pdf-title">Electronic Ticket<strong>Booking Confirmation</strong></div>
+          </div>
+
+          <div class="pdf-section">
+            <div class="pdf-section-label">Passenger</div>
+            <div class="pdf-row">
+              <div>
+                <div class="pdf-label">Name</div>
+                <div class="pdf-value">OKAFOR / AMARA DR</div>
+              </div>
+              <div>
+                <div class="pdf-label">Booking Reference</div>
+                <div class="pdf-value">LX8VQP2</div>
+              </div>
+            </div>
+            <div class="pdf-row">
+              <div>
+                <div class="pdf-label">Ticket Number</div>
+                <div class="pdf-value-small">724 2198347561</div>
+              </div>
+              <div>
+                <div class="pdf-label">Frequent Flyer</div>
+                <div class="pdf-value-small">Miles &amp; More · 992 7734 1128</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pdf-section">
+            <div class="pdf-section-label">Flight Details</div>
+            <div class="pdf-row">
+              <div>
+                <div class="pdf-label">Flight · Class</div>
+                <div class="pdf-value">LX 318 · Business (J)</div>
+              </div>
+              <div>
+                <div class="pdf-label">Date</div>
+                <div class="pdf-value">Tue, 02 Jun 2026</div>
+              </div>
+            </div>
+            <div class="pdf-row">
+              <div>
+                <div class="pdf-label">Departure</div>
+                <div class="pdf-value">LHR · London Heathrow</div>
+                <div class="pdf-value-small" style="margin-top:3px;color:#555;">Terminal 2 · 16:45</div>
+              </div>
+              <div>
+                <div class="pdf-label">Arrival</div>
+                <div class="pdf-value">ZRH · Zürich</div>
+                <div class="pdf-value-small" style="margin-top:3px;color:#555;">Terminal · 19:15 (same day)</div>
+              </div>
+            </div>
+            <div class="pdf-row">
+              <div>
+                <div class="pdf-label">Seat</div>
+                <div class="pdf-value-small">3A · Business</div>
+              </div>
+              <div>
+                <div class="pdf-label">Baggage</div>
+                <div class="pdf-value-small">2 × 32kg checked</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pdf-footer">
+            <span>Issued: 14 Apr 2026</span>
+            <span>SWISS.COM · e-ticket receipt</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- IMAGE MODE -->
+      <div class="input-mode" id="mode-image">
+        <div class="image-preview">
+          <div class="image-tag">Screenshot · WhatsApp</div>
+          <div class="chat-header">
+            <div class="chat-avatar">RM</div>
+            <div>
+              <div class="chat-name">Rob Matheson</div>
+              <div class="chat-status">online</div>
+            </div>
+          </div>
+
+          <div class="chat-bubble">
+            Hey Polly! Quick update on the Allegro Summit delegates 🙏
+            <div class="chat-time">14:22</div>
+          </div>
+
+          <div class="chat-bubble">
+            Marcus Weaver is coeliac — strict GF, cross-contamination has caused issues before. Please flag to venue.
+            <div class="chat-time">14:23</div>
+          </div>
+
+          <div class="chat-bubble">
+            Priya Raman — vegetarian but eats fish. James Okonkwo has a severe nut allergy (anaphylaxis) — epipen info needs to go on his badge.
+            <div class="chat-time">14:23</div>
+          </div>
+
+          <div class="chat-bubble">
+            Oh and Marcus is bringing his partner Elena as a +1 for the gala only, not the day sessions. Thanks! 🌟
+            <div class="chat-time">14:24</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VOICE MODE -->
+      <div class="input-mode" id="mode-voice">
+        <div class="voice-preview">
+          <div class="voice-tag">Voice Memo · 00:34</div>
+
+          <div class="voice-meta">
+            <div class="voice-icon">&#x25B6;</div>
+            <div>
+              <div class="voice-sender">From William</div>
+              <div class="voice-duration">Sent via iOS Voice Memo · 34 seconds</div>
+            </div>
+          </div>
+
+          <div class="waveform" id="waveform"></div>
+
+          <div class="voice-transcript-label">Auto-transcript</div>
+          <div class="voice-transcript" id="voiceTranscript">
+            <span class="voice-transcript-empty">Press Extract to play and transcribe the voice note...</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="extract-btn" id="extractBtn">Extract Information</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Structured <span class="italic">Output</span></div>
+        <div class="panel-num">02 · For Review</div>
+      </div>
+
+      <div id="outputArea">
+        <div class="empty-state">
+          <div class="empty-ornament">&#x273f;</div>
+          <div class="empty-state-display">Nothing to review, yet.</div>
+          <div class="empty-state-text">Paste an input or pick a sample, then press Extract. The agent will pull out structured fields for you to verify before anything touches the platform.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <div class="footer-heading">Honest <span class="italic">notes</span> about the prototype.</div>
+
+    <div class="footer-grid">
+      <div class="footer-col">
+        <div class="footer-col-title">What is real</div>
+        <p>The four input formats (text, PDF, image, voice).</p>
+        <p>The extraction pattern — unstructured input to structured fields with confidence indicators.</p>
+        <p>The review-before-commit workflow.</p>
+        <p>The "needs your attention" flags for ambiguity.</p>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">What is mocked</div>
+        <p>The extraction itself is pattern-matched to four sample inputs.</p>
+        <p>No actual AI is running in this prototype.</p>
+        <p>No connection to EventsAir, Cvent, or any other platform.</p>
+        <p>The "Approve & Push" button does nothing yet.</p>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">What comes next</div>
+        <p>Real Claude-powered extraction on any input format.</p>
+        <p>Direct delegate-record linking in Cvent via API.</p>
+        <p>Side-by-side source highlighting on every extracted field.</p>
+        <p>Full audit log of what was extracted, approved, and pushed.</p>
+      </div>
+    </div>
+
+    <div class="footer-sign">
+      <span>For Polly · v0.1 · 18 April</span>
+      <span class="italic">a purpose-driven tool, in progress.</span>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  const samples = {
+    flight: `From: Sarah Chen <s.chen@northstarcapital.com>
+To: events@tsa-events.com
+Subject: Fwd: Your flight confirmation - QF001
+
+Hi team,
+
+Forwarding my flight details for the conference. Let me know if you need anything else.
+
+Sarah
+
+---------- Forwarded message ----------
+From: Qantas Airways <noreply@qantas.com>
+
+Dear SARAH CHEN,
+
+Your booking is confirmed.
+
+Booking reference: X7KQ2P
+Flight: QF001
+From: London Heathrow (LHR)
+To: Singapore Changi (SIN)
+Departing: 14 May 2026, 21:40
+Arriving: 15 May 2026, 17:55
+Seat: 4A (Business)
+Frequent flyer: QF 1234567`,
+
+    dietary: `Hi Polly,
+
+Quick one — for the Allegro Summit in June, I wanted to flag a couple of dietary bits for our delegates:
+
+- Marcus Weaver is coeliac, strictly gluten free, he's reacted badly to cross-contamination before so please flag to the venue
+- Priya Raman is vegetarian but eats fish
+- James Okonkwo has a severe nut allergy (anaphylaxis) — needs epipen info on his badge
+
+Also Marcus is bringing his partner Elena Weaver as a plus-one for the gala dinner only, not the daytime sessions.
+
+Thanks!
+Rob`,
+
+    delegate: `New delegate for the Zurich event:
+
+Dr. Amara Okafor
+Chief Medical Officer
+Meridian Health Group
+a.okafor@meridianhealth.com
++41 44 555 0123
+
+She'll be joining us Wed-Fri, needs airport pickup from ZRH on Tuesday evening (arriving 19:15 on LX318 from LHR). Staying at the Dolder Grand — we've pre-booked. Vegetarian, no other dietary requirements.
+
+She's speaking on the Thursday panel so please mark her as a VIP Speaker.`,
+
+    messy: `hey — can you add john to the thursday thing? he said he'd rather not do the gala but wants to come to the workshop in the morning. also he might bring someone but isn't sure yet. his email should be in the system from last year i think.
+
+oh and can you check if accommodation is sorted? pretty sure it was but worth double checking.`
+  };
+
+  const voiceTranscriptText = "Hi Polly, it's William. Just a quick one about the Zurich event — I've confirmed Dr. Okafor is now a VIP speaker not just a delegate, so please update her registration type. Also she mentioned in the call that her assistant Thomas Ritter will be attending the Wednesday workshop only, he's CC'd on the main thread. Thomas is allergic to shellfish, not severe but worth noting. Oh and we need to change the gala table allocation so she's on the sponsors' table not the speakers' one. That's it, thanks!";
+
+  const extractions = {
+    flight: {
+      summary: "Flight details extracted from a forwarded Qantas confirmation. Delegate identified as Sarah Chen (Northstar Capital) — matched to an existing record.",
+      fields: [
+        { label: "Delegate", value: "Sarah Chen", confidence: "high", note: "Matched to existing record — Northstar Capital" },
+        { label: "Record type", value: "Flight — Arrival", confidence: "high", note: null },
+        { label: "Airline & flight", value: "Qantas QF001", confidence: "high", note: null },
+        { label: "From", value: "London Heathrow (LHR)", confidence: "high", note: null },
+        { label: "To", value: "Singapore Changi (SIN)", confidence: "high", note: null },
+        { label: "Arrival date", value: "15 May 2026", confidence: "high", note: null },
+        { label: "Arrival time", value: "17:55 SGT", confidence: "high", note: null },
+        { label: "Booking reference", value: "X7KQ2P", confidence: "high", note: null },
+        { label: "Frequent flyer", value: "QF 1234567", confidence: "high", note: null },
+        { label: "Cabin class", value: "Business", confidence: "high", note: null }
+      ],
+      flags: [
+        "No event context was specified. Which event should this flight be linked to? Sarah is registered for two upcoming events."
+      ]
+    },
+
+    dietary: {
+      summary: "Three dietary requirements and one plus-one registration detected. One severe allergy flagged for venue and badge.",
+      fields: [
+        { label: "Delegate 1", value: "Marcus Weaver", confidence: "high", note: "Coeliac — strict GF, cross-contamination risk" },
+        { label: "Delegate 2", value: "Priya Raman", confidence: "high", note: "Pescatarian" },
+        { label: "Delegate 3", value: "James Okonkwo", confidence: "flag", note: "Severe nut allergy (anaphylaxis) — epipen info on badge" },
+        { label: "Plus-one", value: "Elena Weaver", confidence: "med", note: "Gala dinner only, not day sessions. Linked to Marcus Weaver." },
+        { label: "Event", value: "Allegro Summit (June)", confidence: "med", note: "Matched by name — confirm correct event instance" }
+      ],
+      flags: [
+        "James Okonkwo has a severe allergy — recommend pushing venue comms alongside the platform update.",
+        "Elena Weaver appears new — should we create a guest record or a full delegate record?",
+        "Sender is 'Rob' — several possible matches in the contacts database. Please confirm which Rob."
+      ]
+    },
+
+    delegate: {
+      summary: "New full delegate record with travel, accommodation, dietary, and VIP classification. Ready to create.",
+      fields: [
+        { label: "Name", value: "Dr. Amara Okafor", confidence: "high", note: null },
+        { label: "Title", value: "Chief Medical Officer", confidence: "high", note: null },
+        { label: "Organisation", value: "Meridian Health Group", confidence: "high", note: null },
+        { label: "Email", value: "a.okafor@meridianhealth.com", confidence: "high", note: null },
+        { label: "Phone", value: "+41 44 555 0123", confidence: "high", note: null },
+        { label: "Attendance", value: "Wed–Fri", confidence: "high", note: null },
+        { label: "Arrival", value: "Tue — LX318 from LHR, 19:15 ZRH", confidence: "high", note: null },
+        { label: "Airport pickup", value: "Yes — ZRH Tuesday evening", confidence: "high", note: null },
+        { label: "Accommodation", value: "Dolder Grand (pre-booked)", confidence: "high", note: null },
+        { label: "Dietary", value: "Vegetarian", confidence: "high", note: null },
+        { label: "Role", value: "VIP Speaker (Thursday panel)", confidence: "high", note: null }
+      ],
+      flags: [
+        "Event context is 'the Zurich event' — resolved to the nearest upcoming Zurich event; please confirm this is correct.",
+        "Airport pickup needs to be added to the transfer schedule separately."
+      ]
+    },
+
+    messy: {
+      summary: "Low-confidence extraction. Several ambiguities need resolving before any changes are made. We recommend replying to the sender for clarification.",
+      fields: [
+        { label: "Delegate", value: "John (?)", confidence: "flag", note: "First name only — four Johns in the contacts database." },
+        { label: "Event", value: "Thursday event (?)", confidence: "flag", note: "No event name — two events with Thursday sessions in the next 60 days." },
+        { label: "Gala dinner", value: "Declining", confidence: "med", note: null },
+        { label: "Morning workshop", value: "Attending", confidence: "med", note: null },
+        { label: "Plus-one", value: "Possible — not confirmed", confidence: "flag", note: "Sender says 'might bring someone but isn't sure yet'. Do not register." },
+        { label: "Accommodation", value: "Unknown — sender is asking", confidence: "flag", note: "This is a question from the sender, not information provided. Please reply with status." }
+      ],
+      flags: [
+        "Ambiguous delegate identity — do not proceed without confirming which John.",
+        "Ambiguous event — do not proceed without confirming which event.",
+        "The plus-one is speculative, not a commitment.",
+        "The accommodation line is a question, not a data point. Suggest replying to the sender."
+      ]
+    },
+
+    pdf: {
+      summary: "Swiss airline e-ticket extracted. Matched to existing delegate Dr. Amara Okafor for the upcoming Zurich event.",
+      fields: [
+        { label: "Delegate", value: "Dr. Amara Okafor", confidence: "high", note: "Matched to existing record — Meridian Health Group" },
+        { label: "Record type", value: "Flight — Arrival", confidence: "high", note: null },
+        { label: "Airline & flight", value: "Swiss LX 318", confidence: "high", note: null },
+        { label: "From", value: "London Heathrow (LHR, T2)", confidence: "high", note: null },
+        { label: "To", value: "Zurich (ZRH)", confidence: "high", note: null },
+        { label: "Departure", value: "02 Jun 2026, 16:45 BST", confidence: "high", note: null },
+        { label: "Arrival", value: "02 Jun 2026, 19:15 CEST", confidence: "high", note: null },
+        { label: "Booking reference", value: "LX8VQP2", confidence: "high", note: null },
+        { label: "Ticket number", value: "724 2198347561", confidence: "high", note: null },
+        { label: "Frequent flyer", value: "Miles & More · 992 7734 1128", confidence: "high", note: null },
+        { label: "Cabin & seat", value: "Business (J) · 3A", confidence: "high", note: null },
+        { label: "Baggage", value: "2 × 32kg checked", confidence: "high", note: null }
+      ],
+      flags: [
+        "Arrival time (19:15) matches the existing airport pickup request for this delegate. Consider auto-confirming the transfer booking.",
+        "Cabin upgrade from previous economy booking detected — check if this affects VIP category or transfer level."
+      ]
+    },
+
+    image: {
+      summary: "Read from screenshot via OCR. Four WhatsApp messages from Rob Matheson containing three dietary requirements, one plus-one, and one severe allergy flag.",
+      fields: [
+        { label: "Source", value: "WhatsApp — Rob Matheson", confidence: "high", note: "Matched to existing contact (Allegro Summit client lead)" },
+        { label: "Event", value: "Allegro Summit (June)", confidence: "high", note: "Explicit in message" },
+        { label: "Delegate 1", value: "Marcus Weaver", confidence: "high", note: "Coeliac — strict GF, cross-contamination risk. Flag to venue." },
+        { label: "Delegate 2", value: "Priya Raman", confidence: "high", note: "Pescatarian (vegetarian + fish)" },
+        { label: "Delegate 3", value: "James Okonkwo", confidence: "flag", note: "Severe nut allergy (anaphylaxis) — epipen info to appear on badge" },
+        { label: "Plus-one", value: "Elena Weaver", confidence: "med", note: "Gala dinner only. Linked to Marcus Weaver (partner)." }
+      ],
+      flags: [
+        "James Okonkwo's severe allergy — recommend pushing venue comms alongside the platform update.",
+        "Elena Weaver appears new — should we create her as a guest record or a full delegate? Gala-only suggests guest.",
+        "Source is a screenshot; original WhatsApp message not in our records. Consider asking Rob to forward the text for audit."
+      ]
+    },
+
+    voice: {
+      summary: "Voice memo from William transcribed and parsed. Three updates detected for the Zurich event: role change, new attendee, and table reallocation.",
+      fields: [
+        { label: "Source", value: "Voice memo — William Gunner", confidence: "high", note: "Sender identified from internal team" },
+        { label: "Event", value: "Zurich event", confidence: "med", note: "Resolved to nearest upcoming Zurich event — please confirm" },
+        { label: "Update 1", value: "Dr. Amara Okafor — VIP Speaker", confidence: "high", note: "Change registration type from Delegate to VIP Speaker" },
+        { label: "Update 2", value: "Thomas Ritter (new attendee)", confidence: "med", note: "Assistant to Dr. Okafor. Wednesday workshop only. Shellfish allergy (non-severe)." },
+        { label: "Update 3", value: "Gala table — Sponsors'", confidence: "high", note: "Move Dr. Okafor from Speakers' table to Sponsors' table" }
+      ],
+      flags: [
+        "Thomas Ritter is referenced by name only — no email extracted. William said he's 'CC'd on the main thread' — we'd need to pull the email address from that thread before creating the record.",
+        "Shellfish allergy marked 'not severe' — suggest we still flag to venue as standard practice.",
+        "Reason for gala table reallocation not stated. Normal practice or exception? Worth noting in the audit log."
+      ]
+    }
+  };
+
+  const inputArea = document.getElementById('inputArea');
+  const extractBtn = document.getElementById('extractBtn');
+  const outputArea = document.getElementById('outputArea');
+  const samplesBlock = document.querySelector('.samples');
+  const sectionLabels = document.querySelectorAll('.panel .section-label');
+  let currentSample = null;
+  let currentMode = 'text';
+
+  document.querySelectorAll('.sample-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.sample;
+      inputArea.value = samples[key];
+      currentSample = key;
+    });
+  });
+
+  document.querySelectorAll('.type-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const type = btn.dataset.type;
+      currentMode = type;
+
+      // Swap input modes
+      document.querySelectorAll('.input-mode').forEach(m => m.classList.remove('active'));
+      document.getElementById('mode-' + type).classList.add('active');
+
+      // Hide samples block for non-text modes (each non-text mode is itself a pre-loaded sample)
+      if (type === 'text') {
+        samplesBlock.style.display = 'block';
+      } else {
+        samplesBlock.style.display = 'none';
+      }
+
+      // Reset output area
+      outputArea.innerHTML = `<div class="empty-state"><div class="empty-ornament">&#x273f;</div><div class="empty-state-display">Nothing to review, yet.</div><div class="empty-state-text">Press Extract to see how the agent reads this ${type === 'text' ? 'input' : type}.</div></div>`;
+
+      // Build fresh waveform for voice mode
+      if (type === 'voice') {
+        buildWaveform();
+        resetVoiceTranscript();
+      }
+    });
+  });
+
+  function buildWaveform() {
+    const wf = document.getElementById('waveform');
+    if (!wf) return;
+    wf.innerHTML = '';
+    const heights = [20, 35, 50, 65, 45, 30, 55, 70, 85, 60, 40, 50, 75, 90, 70, 55, 40, 60, 80, 65, 45, 30, 50, 70, 85, 75, 55, 40, 60, 70, 50, 35, 45, 65, 80, 60, 40, 30, 50, 65, 75, 55, 45, 35, 25, 40, 55, 70, 60, 45, 30, 25, 35, 50, 65, 75, 85, 70, 50, 35];
+    heights.forEach(h => {
+      const bar = document.createElement('div');
+      bar.className = 'wave-bar';
+      bar.style.height = h + '%';
+      wf.appendChild(bar);
+    });
+  }
+
+  function resetVoiceTranscript() {
+    document.getElementById('voiceTranscript').innerHTML = '<span class="voice-transcript-empty">Press Extract to play and transcribe the voice note...</span>';
+  }
+
+  function animateVoicePlayback(callback) {
+    const bars = document.querySelectorAll('#waveform .wave-bar');
+    const transcriptEl = document.getElementById('voiceTranscript');
+    const words = voiceTranscriptText.split(' ');
+    const totalDuration = 1800;
+    const wordInterval = totalDuration / words.length;
+    const barInterval = totalDuration / bars.length;
+
+    transcriptEl.innerHTML = '';
+    let shown = 0;
+
+    bars.forEach((bar, i) => {
+      setTimeout(() => {
+        bars.forEach(b => b.classList.remove('playing'));
+        bar.classList.add('playing');
+        if (i > 0) bars[i-1].classList.add('played');
+        bars[i-1]?.classList.remove('playing');
+      }, i * barInterval);
+    });
+
+    setTimeout(() => {
+      bars[bars.length - 1]?.classList.remove('playing');
+      bars[bars.length - 1]?.classList.add('played');
+    }, totalDuration);
+
+    const wordTimer = setInterval(() => {
+      if (shown < words.length) {
+        transcriptEl.innerHTML = words.slice(0, shown + 1).join(' ');
+        shown++;
+      } else {
+        clearInterval(wordTimer);
+        if (callback) callback();
+      }
+    }, wordInterval);
+  }
+
+  // Build waveform on load in case voice is first-viewed
+  buildWaveform();
+
+  extractBtn.addEventListener('click', () => {
+    if (currentMode === 'text') {
+      const input = inputArea.value.trim();
+      if (!input) {
+        outputArea.innerHTML = `<div class="empty-state"><div class="empty-ornament">&#x273f;</div><div class="empty-state-display">Nothing to extract.</div><div class="empty-state-text">Paste something in the input panel first, or click a sample button.</div></div>`;
+        return;
+      }
+      runExtractionAnimation(() => {
+        let extraction = extractions[currentSample];
+        if (!extraction || inputArea.value !== samples[currentSample]) {
+          extraction = {
+            summary: "This prototype only has mock responses for the four sample inputs. Click a sample on the left to see a realistic extraction in action.",
+            fields: [],
+            flags: ["No live AI is running in this prototype. In the real tool, any input — however messy, however informal — would be read and extracted by Claude in seconds."]
+          };
+        }
+        renderExtraction(extraction);
+      });
+    } else if (currentMode === 'voice') {
+      // Play the voice and transcribe in real time, then extract
+      outputArea.innerHTML = `<div class="processing"><div class="processing-word pulse-text">listening.</div></div>`;
+      animateVoicePlayback(() => {
+        outputArea.innerHTML = `<div class="processing"><div class="processing-word pulse-text">transcribing.</div></div>`;
+        setTimeout(() => {
+          outputArea.innerHTML = `<div class="processing"><div class="processing-word pulse-text">structuring.</div></div>`;
+        }, 400);
+        setTimeout(() => {
+          renderExtraction(extractions.voice);
+        }, 900);
+      });
+    } else {
+      // PDF or image
+      const verb = currentMode === 'pdf' ? 'parsing' : 'reading image';
+      outputArea.innerHTML = `<div class="processing"><div class="processing-word pulse-text">${verb}.</div></div>`;
+      setTimeout(() => {
+        outputArea.innerHTML = `<div class="processing"><div class="processing-word pulse-text">extracting.</div></div>`;
+      }, 500);
+      setTimeout(() => {
+        outputArea.innerHTML = `<div class="processing"><div class="processing-word pulse-text">structuring.</div></div>`;
+      }, 1000);
+      setTimeout(() => {
+        renderExtraction(extractions[currentMode]);
+      }, 1500);
+    }
+  });
+
+  function runExtractionAnimation(onComplete) {
+    outputArea.innerHTML = `<div class="processing"><div class="processing-word pulse-text">reading.</div></div>`;
+    setTimeout(() => {
+      outputArea.innerHTML = `<div class="processing"><div class="processing-word pulse-text">extracting.</div></div>`;
+    }, 500);
+    setTimeout(() => {
+      outputArea.innerHTML = `<div class="processing"><div class="processing-word pulse-text">structuring.</div></div>`;
+    }, 1000);
+    setTimeout(onComplete, 1500);
+  }
+
+  function renderExtraction(data) {
+    let html = `<div class="fade-in">`;
+    html += `<div class="extraction-summary">${data.summary}</div>`;
+
+    if (data.fields.length > 0) {
+      data.fields.forEach(f => {
+        const confClass = f.confidence;
+        const confLabel = f.confidence === 'high' ? 'Confident' : f.confidence === 'med' ? 'Check' : 'Flag';
+        html += `<div class="field-row">
+          <div class="field-meta">
+            <span class="field-label">${f.label}</span>
+            <span class="confidence ${confClass}">${confLabel}</span>
+          </div>
+          <div class="field-value">${f.value}</div>
+          ${f.note ? `<div class="field-note">${f.note}</div>` : ''}
+        </div>`;
+      });
+    }
+
+    if (data.flags && data.flags.length > 0) {
+      html += `<div class="flags-section">
+        <div class="flags-header">
+          <span class="flags-ornament">&#x273f;</span>
+          <span class="flags-title">Needs your attention</span>
+        </div>
+        ${data.flags.map(f => `<div class="flag-item">${f}</div>`).join('')}
+      </div>`;
+    }
+
+    if (data.fields.length > 0) {
+      html += `<div class="action-row">
+        <button class="action-btn" onclick="alert('Prototype — this would let you edit the extracted fields before pushing anything to the platform.')">Edit Fields</button>
+        <button class="action-btn primary" onclick="alert('Prototype — this would push the approved changes to Cvent via API, with a full audit trail of what was extracted and approved.')">Approve & Push</button>
+      </div>`;
+    }
+
+    html += `</div>`;
+    outputArea.innerHTML = html;
+  }
+</script>
+
+</body>
+</html>
